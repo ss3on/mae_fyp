@@ -4,8 +4,6 @@ from pathlib import Path
 import polars as pl
 from bs4 import BeautifulSoup
 
-from ..file_handling import file_location
-
 main_url :str = r'https://asmedigitalcollection.asme.org/'
 
 def issue_article_scrap(article_soup :BeautifulSoup, articles_to_append: dict) -> dict:
