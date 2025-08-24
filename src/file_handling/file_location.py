@@ -22,4 +22,5 @@ class FolderPathOfASME(FileLocation):
         self.asme_jmd_html_years = self.asme_jmd / 'html_years'
         self.asme_jmd_html_issues = self.asme_jmd / 'asme_issues'
         self.asme_jmd_pdf = self.asme_jmd / 'pdf'
+        self.article_html = self.asme_jmd / 'article_html'
 

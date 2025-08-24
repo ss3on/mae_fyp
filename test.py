@@ -1,7 +1,6 @@
+import time
 import polars as pl
-import requests
 from pathlib import Path
-from selenium import webdriver
 
 from src.file_handling import file_location
 from src.web_scraping import asme_digitial_jmd
@@ -29,6 +28,12 @@ if not jmd_bare_paper_infor_path.exists():
              pl.col('pdf_url').str.split('.org').list.get(1)
              ).alias('pdf_url_remotexs')
         )
+        df = df.with_columns(
+            (pl.col('article_url').str.split('.org').list.get(0) +
+            pl.lit('.org') + pl.lit('.remotexs.ntu.edu.sg') +
+             pl.col('article_url').str.split('.org').list.get(1)
+             ).alias('article_url_remotexs')
+        )
         return df
 
     cluster_url_by_issue_df = cluster_url_by_issue_remotexs(issues_dfs=all_issues_infor_df)
@@ -37,35 +42,45 @@ else:
     cluster_url_by_issue_df = pl.read_parquet(jmd_bare_paper_infor_path)
 
 
-clustered_url_gte_2022_df = cluster_url_by_issue_df.filter(pl.col('year')>='2021')
 
-url_to_open_list = clustered_url_gte_2022_df['pdf_url_remotexs'].to_list()
-pdf_filename_list = clustered_url_gte_2022_df['pdf_filename'].to_list()
-pdf_folder :Path = data_path / 'asme_jmd' / 'pdf'
-if not pdf_folder.exists():
-    pdf_folder.mkdir()
-pdf_save_paths_list = [pdf_folder / pdf_filename for pdf_filename in pdf_filename_list]
+
+url_to_open_list = cluster_url_by_issue_df['article_url_remotexs'].to_list()
+doi_filename_list = cluster_url_by_issue_df['doi_filename'].to_list()
+article_html_folder :Path = asme_path.article_html
+
+if not article_html_folder.exists(): article_html_folder.mkdir()
+
+html_folder_paths_list = [article_html_folder / (doi_filename + '.html') for doi_filename in doi_filename_list]
 test_pdf_url = url_to_open_list[0]
 
-
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
 
 # login to remotexs
 driver = webdriver.Chrome()
 driver.get(test_pdf_url)
 
-print('Please login to remotexs')
-input("Press enter to continue...")
+input('Press enter to continue...')
 
-for save_path, pdf_url in zip(pdf_save_paths_list, url_to_open_list):
+for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     if save_path.exists():
         continue
-    driver.execute_script(f"window.open('{pdf_url}', '_blank');")
+    try:
+        driver.execute_script(f"window.open('{html_url}', '_blank');")
+        driver.switch_to.window(driver.window_handles[-1])
+        selector = "#Sidebar > div.sidebar-widget_wrap > div > div > div > div > div > div > div.widget-DynamicWidgetLayout"
+        WebDriverWait(driver, 20).until(
+            ec.presence_of_element_located((By.CSS_SELECTOR, selector))
+        )
+
+        save_path.write_text(driver.page_source, encoding="utf-8")
+        print(f'Saved to:  {save_path}')
+    except Exception as e:
+        print(f'Skipped saving {html_url} due to: {e}')
+
     driver.switch_to.window(driver.window_handles[-1])
-
-    # Download original PDF with requests (session cookies preserved)
-    cookies = {c['name']: c['value'] for c in driver.get_cookies()}
-    r = requests.get(driver.current_url, cookies=cookies)
-    save_path.write_bytes(r.content)
-
     driver.close()
+    time.sleep(1)
     driver.switch_to.window(driver.window_handles[0])

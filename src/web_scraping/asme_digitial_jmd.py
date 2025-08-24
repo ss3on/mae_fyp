@@ -65,7 +65,7 @@ def all_issues_in_folder_to_df(folder_path :Path)->pl.DataFrame:
     dfs :list = [issue_html_to_df(html_path) for html_path in html_path_list]
     df = pl.concat(dfs)
     df = df.with_columns(
-        pdf_filename=pl.col('volume') + pl.lit('_') + pl.col('issue') + pl.lit('_') + pl.col('title').str.replace_all(r'[\\/*?:"<>|]', "_") + pl.lit('.pdf')
+        doi_filename=(pl.col('doi').str.replace_all(r'https://|.org', '').str.replace_all(r'[\\/*?:"<>|]', '_')),
     )
 
 
