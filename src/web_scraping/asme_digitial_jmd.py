@@ -50,11 +50,13 @@ def issue_page_scrap(issue_soup :BeautifulSoup) -> dict:
 
 
 def issue_html_to_df(issue_path :Path)->pl.DataFrame:
-    with open(issue_path) as issue_file:
+    with open(issue_path, 'r', encoding='utf-8') as issue_file:
         soup :BeautifulSoup = BeautifulSoup(issue_file, 'lxml')
     articles_infor :dict = issue_page_scrap(soup)
     articles_infor_df :pl.DataFrame = pl.DataFrame(articles_infor)
     return articles_infor_df
+
+
 
 def all_issues_in_folder_to_df(folder_path :Path)->pl.DataFrame:
     html_path_map :map = folder_path.glob('*.html')
@@ -63,6 +65,8 @@ def all_issues_in_folder_to_df(folder_path :Path)->pl.DataFrame:
     dfs :list = [issue_html_to_df(html_path) for html_path in html_path_list]
     df = pl.concat(dfs)
     df = df.with_columns(
-        (pl.col('volume') + pl.lit('_') + pl.col('issue') + pl.lit('_') + pl.col('title') + pl.lit('.pdf')).alias('pdf_filename'),
+        pdf_filename=pl.col('volume') + pl.lit('_') + pl.col('issue') + pl.lit('_') + pl.col('title').str.replace_all(r'[\\/*?:"<>|]', "_") + pl.lit('.pdf')
     )
+
+
     return df
