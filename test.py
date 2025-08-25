@@ -64,6 +64,7 @@ driver.get(test_pdf_url)
 
 input('Press enter to continue...')
 
+n :int = 0
 for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     if save_path.exists():
         continue
@@ -80,7 +81,13 @@ for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     except Exception as e:
         print(f'Skipped saving {html_url} due to: {e}')
 
-    driver.switch_to.window(driver.window_handles[-1])
     driver.close()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[0])
+
+    n += 1
+    if n % 10 == 0:
+        time.sleep(5)
+
+    if n % 50 == 0:
+        time.sleep(60)
