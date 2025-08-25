@@ -53,7 +53,7 @@ if not article_html_folder.exists(): article_html_folder.mkdir()
 html_folder_paths_list = [article_html_folder / (doi_filename + '.html') for doi_filename in doi_filename_list]
 test_pdf_url = url_to_open_list[0]
 
-from selenium import webdriver
+import undetected_chromedriver as webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
