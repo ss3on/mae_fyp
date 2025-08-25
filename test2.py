@@ -44,7 +44,7 @@ else:
 
 
 
-url_to_open_list = cluster_url_by_issue_df['article_url_remotexs'].to_list()
+url_to_open_list = cluster_url_by_issue_df['doi'].to_list()
 doi_filename_list = cluster_url_by_issue_df['doi_filename'].to_list()
 article_html_folder :Path = asme_path.article_html
 
