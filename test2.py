@@ -53,7 +53,7 @@ if not article_html_folder.exists(): article_html_folder.mkdir()
 html_folder_paths_list = [article_html_folder / (doi_filename + '.html') for doi_filename in doi_filename_list]
 test_pdf_url = url_to_open_list[0]
 
-from selenium import webdriver
+import undetected_chromedriver as webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
@@ -69,8 +69,7 @@ for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     if save_path.exists():
         continue
     try:
-        driver.execute_script(f"window.open('{html_url}', '_blank');")
-        driver.switch_to.window(driver.window_handles[-1])
+        driver.get(html_url)
         selector = "#Sidebar > div.sidebar-widget_wrap > div > div > div > div > div > div > div.widget-DynamicWidgetLayout"
         WebDriverWait(driver, 20).until(
             ec.presence_of_element_located((By.CSS_SELECTOR, selector))
@@ -80,9 +79,7 @@ for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     except Exception as e:
         print(f'Skipped saving {html_url} due to: {e}')
 
-    driver.close()
     time.sleep(1)
-    driver.switch_to.window(driver.window_handles[0])
 
     n += 1
     if n % 10 == 0:
