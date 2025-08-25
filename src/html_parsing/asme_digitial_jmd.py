@@ -68,5 +68,4 @@ def all_issues_in_folder_to_df(folder_path :Path)->pl.DataFrame:
         doi_filename=(pl.col('doi').str.replace_all(r'https://|.org', '').str.replace_all(r'[\\/*?:"<>|]', '_')),
     )
 
-
     return df
