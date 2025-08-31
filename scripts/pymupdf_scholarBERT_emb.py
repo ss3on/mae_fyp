@@ -14,11 +14,11 @@ notifier = telegram_update.TelegramNotifier(window_size=1000)
 data = file_location.FolderPathOfASME()
 data_path = data.data
 txt_path = data.asme_jmd / 'pymupdf_text'
-embeddings_path = data.asme_jmd / 'embeddings' / 'pymupdf_fp32'
+embeddings_path = data.asme_jmd / 'embeddings' / 'pymupdf_fp16'
 if not embeddings_path.exists(): embeddings_path.mkdir()
 
 tokenizer = AutoTokenizer.from_pretrained("globuslabs/ScholarBERT-XL", add_pooling_layer=False)
-model = AutoModel.from_pretrained("globuslabs/ScholarBERT-XL" , dtype=torch.float32).to("cuda")
+model = AutoModel.from_pretrained("globuslabs/ScholarBERT-XL" , dtype=torch.float16).to("cuda")
 model.eval()
 
 
