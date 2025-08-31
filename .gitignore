@@ -1,4 +1,3 @@
 literacy_review/
 .idea/
-data_scraping/web_scraping/asme_jmd_html.py
-data/
+.env
