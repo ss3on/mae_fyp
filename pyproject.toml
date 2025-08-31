@@ -1,0 +1,67 @@
+[project]
+name = "mae-fyp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "docling>=2.48.0",
+    "hdbscan>=0.8.40",
+    "ipywidgets>=8.1.7",
+    "markdownify>=1.2.0",
+    "matplotlib>=3.10.6",
+    "numpy>=2.2.6",
+    "pandas-stubs==2.3.2.250827",
+    "polars>=1.32.3",
+    "pymupdf>=1.26.4",
+    "safetensors>=0.6.2",
+    "scipy-stubs==1.16.1.1",
+    "selenium>=4.35.0",
+    "streamlit>=1.49.1",
+    "transformers>=4.56.0",
+    "umap-learn>=0.5.9.post2",
+]
+
+[dependency-groups]
+dev = [
+    "jupyterlab>=4.4.6",
+]
+
+
+[project.optional-dependencies]
+cpu = [
+  "torch>=2.7.0",
+  "torchvision>=0.22.0",
+]
+cu128 = [
+  "torch>=2.7.0",
+  "torchvision>=0.22.0",
+]
+
+[tool.uv]
+conflicts = [
+  [
+    { extra = "cpu" },
+    { extra = "cu128" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+torchvision = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
