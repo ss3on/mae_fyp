@@ -1,8 +1,10 @@
 import os
 import requests
-from dotenv import load_dotenv
+import tkinter as tk
+from tkinter import simpledialog
 from collections import deque
 from datetime import datetime
+from dotenv import load_dotenv
 
 load_dotenv()
 

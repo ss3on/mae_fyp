@@ -8,7 +8,6 @@ bootstrap.patch_sys_path()
 from src.file_handling import file_location
 
 import telegram_update
-
 notifier = telegram_update.TelegramNotifier(window_size=100)
 
 data = file_location.FolderPathOfASME()
