@@ -20,6 +20,7 @@ dependencies = [
     "streamlit>=1.49.1",
     "transformers>=4.56.0",
     "umap-learn>=0.5.9.post2",
+    "undetected-chromedriver>=3.5.5",
 ]
 
 [dependency-groups]

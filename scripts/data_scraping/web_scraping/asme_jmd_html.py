@@ -5,13 +5,10 @@ from pathlib import Path
 from src.file_handling import file_location
 from src.html_parsing import asme_digitial_jmd
 
-folder_path = file_location.FileLocation()
-root_path = folder_path.root
-data_path = root_path.parent.parent / 'fyp' / 'data'
 
-asme_path = file_location.FolderPathOfASME(data_path)
-asme_html_issues_path = asme_path.asme_jmd_html_issues
-jmd_bare_paper_infor_path = asme_path.asme_jmd_pdf / 'jmd_papers_bare_infor.parquet'
+data = file_location.FolderPathOfASME()
+asme_html_issues_path = data.asme_jmd_html_issues
+jmd_bare_paper_infor_path = data.asme_jmd_pdf / 'jmd_papers_bare_infor.parquet'
 
 
 if not jmd_bare_paper_infor_path.exists():
@@ -44,9 +41,9 @@ else:
 
 
 
-url_to_open_list = cluster_url_by_issue_df['doi'].to_list()
+url_to_open_list = cluster_url_by_issue_df['article_url_remotexs'].to_list()
 doi_filename_list = cluster_url_by_issue_df['doi_filename'].to_list()
-article_html_folder :Path = asme_path.article_html
+article_html_folder :Path = data.article_html
 
 if not article_html_folder.exists(): article_html_folder.mkdir()
 
@@ -69,7 +66,8 @@ for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     if save_path.exists():
         continue
     try:
-        driver.get(html_url)
+        driver.execute_script(f"window.open('{html_url}', '_blank');")
+        driver.switch_to.window(driver.window_handles[-1])
         selector = "#Sidebar > div.sidebar-widget_wrap > div > div > div > div > div > div > div.widget-DynamicWidgetLayout"
         WebDriverWait(driver, 20).until(
             ec.presence_of_element_located((By.CSS_SELECTOR, selector))
@@ -79,7 +77,9 @@ for save_path, html_url in zip(html_folder_paths_list, url_to_open_list):
     except Exception as e:
         print(f'Skipped saving {html_url} due to: {e}')
 
+    driver.close()
     time.sleep(1)
+    driver.switch_to.window(driver.window_handles[0])
 
     n += 1
     if n % 10 == 0:
