@@ -12,7 +12,6 @@ notifier = telegram_update.TelegramNotifier(window_size=10)
 
 def main():
 
-
     data = file_location.FolderPathOfASME()
     markdown_path = data.asme_jmd / 'markdown'
     pdf_path = data.asme_jmd_pdf
