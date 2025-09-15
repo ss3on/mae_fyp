@@ -23,6 +23,7 @@ md_folder_path = folder_path.asme_jmd / 'markdown'
 
 
 TOP_N = 50
+NUM_CORES = 16
 
 
 def init_worker():
@@ -75,7 +76,6 @@ if __name__ == "__main__":
 
     session_process_time = 0.0
 
-    NUM_CORES = 16
     batch_size = 100
     all_results = {}
 
