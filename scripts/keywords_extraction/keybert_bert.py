@@ -24,13 +24,14 @@ md_folder_path = folder_path.asme_jmd / 'markdown'
 
 TOP_N = 50
 NUM_CORES = 16
+MODEL = "allenai/scibert_scivocab_uncased"
 
 
 def init_worker():
     global kw_model
     from keybert import KeyBERT
     from sentence_transformers import SentenceTransformer
-    sentence_model = SentenceTransformer("allenai/scibert_scivocab_uncased")
+    sentence_model = SentenceTransformer(MODEL)
     kw_model = KeyBERT(model=sentence_model)
 
 
