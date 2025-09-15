@@ -3,7 +3,7 @@ import polars as pl
 from pathlib import Path
 
 from src.file_handling import file_location
-from src.html_parsing import asme_digitial_jmd
+from src.corpus_parsing import asme_digitial_jmd
 
 
 data = file_location.FolderPathOfASME()

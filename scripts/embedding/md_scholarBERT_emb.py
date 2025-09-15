@@ -8,16 +8,16 @@ bootstrap.patch_sys_path()
 from src.file_handling import file_location
 
 import telegram_update
-notifier = telegram_update.TelegramNotifier(window_size=100)
+notifier = telegram_update.TelegramNotifier(window_size=1000)
 
 data = file_location.FolderPathOfASME()
 data_path = data.data
 md_path = data.asme_jmd / 'markdown'
-embeddings_path = data.asme_jmd / 'embeddings' / 'fp32'
+embeddings_path = data.asme_jmd / 'embeddings' / 'fp16'
 if not embeddings_path.exists(): embeddings_path.mkdir()
 
 tokenizer = AutoTokenizer.from_pretrained("globuslabs/ScholarBERT-XL", add_pooling_layer=False)
-model = AutoModel.from_pretrained("globuslabs/ScholarBERT-XL" , dtype=torch.float32).to("cuda")
+model = AutoModel.from_pretrained("globuslabs/ScholarBERT-XL" , dtype=torch.float16).to("cuda")
 model.eval()
 
 

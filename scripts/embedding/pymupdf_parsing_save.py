@@ -1,10 +1,10 @@
 import pymupdf
 
 import time
-import bootstrap
+from scripts import bootstrap
 bootstrap.patch_sys_path()
 
-import telegram_update
+from scripts import telegram_update
 notifier = telegram_update.TelegramNotifier(window_size=1000)
 
 session_process_time :float = 0.0
