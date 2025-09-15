@@ -1,7 +1,6 @@
 import time
 import polars as pl
 from pathlib import Path
-
 from multiprocessing import Pool
 
 from scripts import bootstrap
