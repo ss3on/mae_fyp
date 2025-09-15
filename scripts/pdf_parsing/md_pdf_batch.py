@@ -2,10 +2,10 @@ import time
 from multiprocessing import Process
 from docling.document_converter import DocumentConverter
 
-import bootstrap
+from scripts import bootstrap
 bootstrap.patch_sys_path()
 from src.file_handling import file_location
-import telegram_update
+from scripts import telegram_update
 
 def get_unprocessed_pdfs(pdf_path, markdown_path):
     existing_md = {p.stem for p in markdown_path.glob('*.md')}

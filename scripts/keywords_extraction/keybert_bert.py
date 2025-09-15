@@ -1,7 +1,14 @@
+import time
 import polars as pl
 from pathlib import Path
 
 from multiprocessing import Pool
+
+from scripts import bootstrap
+bootstrap.patch_sys_path()
+from scripts import telegram_update
+
+notifier = telegram_update.TelegramNotifier(window_size=1)
 
 from src.corpus_parsing.docling_md_parsing import md_noise_reduction
 from src.file_handling.file_location import FolderPathOfASME
@@ -13,7 +20,7 @@ if not keywords_folder_path.exists(): keywords_folder_path.mkdir()
 if not keybert_bert_folder_path.exists(): keybert_bert_folder_path.mkdir()
 
 md_folder_path = folder_path.asme_jmd / 'markdown'
-#test_md_file_paths = list(md_folder_path.glob("*.md"))[:20]
+
 
 TOP_N = 50
 
@@ -65,6 +72,9 @@ def unprocessed_path(
 
 
 if __name__ == "__main__":
+
+    session_process_time = 0.0
+
     NUM_CORES = 16
     batch_size = 100
     all_results = {}
@@ -73,8 +83,12 @@ if __name__ == "__main__":
     parquet_files = [name.stem.split('_')[-1] for name in list(keybert_bert_folder_path.glob("*.parquet"))]
     last_batch_number = max([int(x) for x in parquet_files], default=0)
 
+
     with Pool(processes=NUM_CORES, initializer=init_worker) as pool:
         for i in range(0, len(unprocessed_paths), batch_size):
+
+            start_time = time.time()
+
             batch_paths = unprocessed_paths[i:i + batch_size]
             results = pool.map(extract_keywords_from_file, batch_paths, chunksize=10)
 
@@ -90,8 +104,17 @@ if __name__ == "__main__":
             ])
 
             export_batch_number = i // batch_size + 1 + last_batch_number
+
             batch_df.write_parquet(keybert_bert_folder_path / f"keywords_batch_{export_batch_number}.parquet")
-            print(f"Batch {export_batch_number} done.")
+            batch_message = f"Batch {export_batch_number} done."
+            print(batch_message)
+
+            elapsed = time.time() - start_time
+            session_process_time += elapsed
+            processed_message = f"{batch_message}  in {elapsed:.2f}s. Session Total: {session_process_time:.2f}s"
+            notifier.add_message(processed_message)
+
+
 
 
 
