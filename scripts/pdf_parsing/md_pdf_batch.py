@@ -41,7 +41,7 @@ def main(simultaneous_run:int):
         markdown_path.mkdir()
 
     all_pdfs = get_unprocessed_pdfs(pdf_path, markdown_path)
-    chunks = [all_pdfs[i::simultaneous_run] for i in range(simultaneous_run)]  # 3-way round-robin split
+    chunks = [all_pdfs[i::simultaneous_run] for i in range(simultaneous_run)]  # n-way round-robin split
 
     processes = [Process(target=process_batch, args=(chunk, markdown_path)) for chunk in chunks]
 
